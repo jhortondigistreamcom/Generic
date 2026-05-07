@@ -84,6 +84,8 @@ Function GetGroupMembers{
     try{
         $SearchKey = $Group.Replace("-"," ")
         $SearchKey = $SearchKey.Replace("."," ")
+        $SearchKey = $SearchKey.Replace("&"," ")
+
         Write-host "[Status]: Searching Key $SearchKey" 
         $GroupOBJ = Get-MgGroup -Search "displayName:$SearchKey" -ConsistencyLevel eventual -CountVariable recCount
         if($GroupOBJ){
