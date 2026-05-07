@@ -2,9 +2,9 @@
 #${env:UPNorDevice} = "L011846"
 #${env:Group} = "Intune Security - Disable SMB 2.0"
 #sanitizing inputs
-$CMD = [System.Management.Automation.Language.CodeGeneration]::EscapeSingleQuotedStringContent("${env:cmd}")
-$UPNorDevice = [System.Management.Automation.Language.CodeGeneration]::EscapeSingleQuotedStringContent("${env:UPNorDevice}")
-$Group = [System.Management.Automation.Language.CodeGeneration]::EscapeSingleQuotedStringContent("${env:Group}")
+$CMD = [System.Management.Automation.Language.CodeGeneration]::EscapeSingleQuotedStringContent("${env:CMD}")
+$UPNorDevice = [System.Management.Automation.Language.CodeGeneration]::EscapeSingleQuotedStringContent("${env:UPNORDEVICE}")
+$Group = [System.Management.Automation.Language.CodeGeneration]::EscapeSingleQuotedStringContent("${env:GROUP}")
 
 Connect-MgGraph -Identity
 #list of approved safe Entra Groups
