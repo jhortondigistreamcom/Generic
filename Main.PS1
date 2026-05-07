@@ -90,9 +90,7 @@ Function GetGroupMembers{
             $GroupOBJ
             try{
                 $GroupMembers = Get-MgGroupMember -All -GroupId $GroupOBJ.id  | ForEach-Object { $_.AdditionalProperties['displayName'] }
-                write-host "Members"
-                Write-Host "--------"
-                write-host $GroupMembers[0]
+                for($i=0;$i-lt $GroupMembers.count;$i++){write-host $GroupMembers[$i]}
             }catch{
                 Write-host '[Failed]: Unable to process command, see error:'
                 $_
