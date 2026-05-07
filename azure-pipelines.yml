@@ -1,0 +1,40 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+
+trigger:
+- main
+
+pool:
+  name: HWGroup1
+
+steps:
+- checkout: self
+
+- task: PowerShell@2
+  displayName: 'Run main.ps1 (PS5 + Managed Identity)'
+  inputs:
+    targetType: 'inline'
+    pwsh: false
+    script: |
+      Write-Host "Running in Windows PowerShell 5.1"
+
+      # Run script
+
+      $result = .\main.ps1
+      $finalResult = $result[-1]
+      Write-Host "Script returned: $result"
+
+      if ($finalResult -ne $true) {
+          Write-Error "main.ps1 did not return TRUE. Failing pipeline."
+          exit 1
+      }
+
+      Write-Host "main.ps1 succeeded."
