@@ -11,7 +11,7 @@ Connect-MgGraph -Identity
 $ApprovedEntraUserGroup = "Intune Security - Disable SMB 2.0","Intune - Allow Entra Kerberos","Intune - Policy - Windows Hello"
 $ApprovedEntraDeviceGroup = "Intune - Policy - Always On VPN","Intune - Policy - Q & R Drive","Intune - Policy - Time Server"
 #list of Approved Functions (mostly for AI)
-$ApprovedFunctions = "AddUserToGroup","AddDeviceToGroup","ApprovedGroups"
+$ApprovedFunctions = "AddUserToGroup","AddDeviceToGroup","ApprovedGroups","GetGroupMembers"
 
 #add user to user group
 Function AddUserToGroup{
@@ -19,13 +19,15 @@ Function AddUserToGroup{
         [Parameter(Mandatory=$true)] $UPN,
         [Parameter(Mandatory=$true)] $Group
     )
- 
+    Write-host '[Status]: Attempting to Add $UPN to $Group'
     if(ApprovedGroups -Group $Group){
+        Write-host '[Approved]: $Group is an approved group'
         $groupobj = Get-MgGroup -Filter "DisplayName eq '$Group'"
         $userobj = Get-MgUser -UserId $UPN
         try{
             New-MgGroupMember -GroupId $groupobj.Id -DirectoryObjectId $userobj.Id
         }catch{
+            Write-host '[Failed]: Unable to process command, see error:'
             $_
             return $false
         }
@@ -43,11 +45,13 @@ Function AddDeviceToGroup{
         [Parameter(Mandatory=$true)] $Device,
         [Parameter(Mandatory=$true)] $Group
     )
- 
+    Write-host '[Status]: Attempting to Add $Device to $Group'
     if(ApprovedGroups -Group $Group){
+        Write-host '[Approved]: $Group is an approved group'
         $groupobj = Get-MgGroup -Filter "DisplayName eq '$Group'"
         $Deviceobj = Get-MgDevice -Filter "displayName eq '$Device'"
         try{
+            Write-host '[Failed]: Unable to process command, see error:'
             New-MgGroupMember -GroupId $groupobj.Id -DirectoryObjectId $Deviceobj.Id
         }catch{
             return $false
@@ -72,6 +76,20 @@ Function ApprovedGroups{
     }
 }
 
+Function GetGroupMembers{
+    param(
+        [Parameter(Mandatory=$true)] $Group
+    )
+    Write-host '[Status]: Get Group Members for $Group'
+    try{
+        Get-MgGroup -Filter "DisplayName eq '$Group'" | Get-MgGroupMember -All
+        Return $true
+    }catch{
+        Write-host '[Failed]: Unable to process command, see error:'
+        $_
+        return $false
+    }
+}
 #debug code
 #$CMD = "AddDeviceToGroup"
 #$UPNorDevice = "L011846"
@@ -82,6 +100,8 @@ if($CMD -eq "AddUserToGroup"){
     $result = AddUserToGroup -UPN $UPNorDevice -Group $Group
 }elseif($CMD -eq "AddDeviceToGroup"){
     $result = AddDeviceToGroup -Device $UPNorDevice -Group $Group
+}elseif($CMD -eq "GetGroupMembers"){
+    $result = GetGroupMembers -Group $Group
 }
 
 return $result
