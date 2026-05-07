@@ -1,7 +1,11 @@
 Connect-MgGraph -Identity
-$ApprovedEntraUserGroup = "Intune Security - Disable SMB 2.0","zz"
-$ApprovedEntraDeviceGroup = "Intune - Policy - Always On VPN","zz"
+#list of approved safe Entra Groups
+$ApprovedEntraUserGroup = "Intune Security - Disable SMB 2.0","Intune - Allow Entra Kerberos","Intune - Policy - Windows Hello"
+$ApprovedEntraDeviceGroup = "Intune - Policy - Always On VPN","Intune - Policy - Q & R Drive","Intune - Policy - Time Server"
+#list of Approved Functions (mostly for AI)
 $ApprovedFunctions = "AddUserToGroup","AddDeviceToGroup","ApprovedGroups"
+
+#add user to user group
 Function AddUserToGroup{
     param(
         [Parameter(Mandatory=$true)] $UPN,
@@ -25,6 +29,7 @@ Function AddUserToGroup{
     }
 }
 
+#add user to device group
 Function AddDeviceToGroup{
     param(
         [Parameter(Mandatory=$true)] $Device,
@@ -47,6 +52,7 @@ Function AddDeviceToGroup{
     }
 }
 
+#Checks if a group is approved
 Function ApprovedGroups{
     param(
         [Parameter(Mandatory=$true)] $Group
@@ -58,10 +64,12 @@ Function ApprovedGroups{
     }
 }
 
+#debug code
 #${env:cmd} = "AddDeviceToGroup"
 #${env:UPNorDevice} = "L011846"
 #${env:Group} = "Intune Security - Disable SMB 2.0"
 
+#main, we use CMD to determine which functiont yo run.
 if(${env:cmd} -eq "AddUserToGroup"){
     $result = AddUserToGroup -UPN ${env:UPNorDevice} -Group ${env:Group}
 }elseif(${env:cmd} -eq "AddDeviceToGroup"){
