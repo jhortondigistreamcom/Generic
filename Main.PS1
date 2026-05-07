@@ -1,3 +1,11 @@
+#${env:cmd} = "AddDeviceToGroup"
+#${env:UPNorDevice} = "L011846"
+#${env:Group} = "Intune Security - Disable SMB 2.0"
+#sanitizing inputs
+$CMD = [System.Management.Automation.Language.CodeGeneration]::EscapeSingleQuotedStringContent("${env:cmd}")
+$UPNorDevice = [System.Management.Automation.Language.CodeGeneration]::EscapeSingleQuotedStringContent("${env:UPNorDevice}")
+$Group = [System.Management.Automation.Language.CodeGeneration]::EscapeSingleQuotedStringContent("${env:Group}")
+
 Connect-MgGraph -Identity
 #list of approved safe Entra Groups
 $ApprovedEntraUserGroup = "Intune Security - Disable SMB 2.0","Intune - Allow Entra Kerberos","Intune - Policy - Windows Hello"
@@ -65,15 +73,15 @@ Function ApprovedGroups{
 }
 
 #debug code
-#${env:cmd} = "AddDeviceToGroup"
-#${env:UPNorDevice} = "L011846"
-#${env:Group} = "Intune Security - Disable SMB 2.0"
+#$CMD = "AddDeviceToGroup"
+#$UPNorDevice = "L011846"
+#$Group = "Intune Security - Disable SMB 2.0"
 
 #main, we use CMD to determine which functiont yo run.
-if(${env:cmd} -eq "AddUserToGroup"){
-    $result = AddUserToGroup -UPN ${env:UPNorDevice} -Group ${env:Group}
-}elseif(${env:cmd} -eq "AddDeviceToGroup"){
-    $result = AddDeviceToGroup -Device ${env:UPNorDevice} -Group ${env:Group}
+if($CMD -eq "AddUserToGroup"){
+    $result = AddUserToGroup -UPN $UPNorDevice -Group $Group
+}elseif($CMD -eq "AddDeviceToGroup"){
+    $result = AddDeviceToGroup -Device $UPNorDevice -Group $Group
 }
 
 return $result
