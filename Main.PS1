@@ -82,7 +82,21 @@ Function GetGroupMembers{
     )
     Write-host '[Status]: Get Group Members for $Group'
     try{
-        Get-MgGroup -Filter "DisplayName eq '$Group'" | Get-MgGroupMember -All
+        $GroupOBJ = Get-MgGroup -Search 'displayName:Marketing' -ConsistencyLevel eventual -CountVariable recCount
+        if($GroupOBJ){
+            $GroupOBJ
+            try{
+                $GroupOBJ | Get-MgGroupMember -All
+            }catch{
+                Write-host '[Failed]: Unable to process command, see error:'
+                $_
+                return $false
+            }
+        }else{
+            Write-host '[Failed]: to find the group:'
+            return $false
+        }
+        
         Return $true
     }catch{
         Write-host '[Failed]: Unable to process command, see error:'
