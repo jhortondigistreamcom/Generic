@@ -82,7 +82,7 @@ Function GetGroupMembers{
     )
     Write-host '[Status]: Get Group Members for $Group'
     try{
-        $GroupOBJ = Get-MgGroup -Search 'displayName:Marketing' -ConsistencyLevel eventual -CountVariable recCount
+        $GroupOBJ = Get-MgGroup -Search 'displayName:$Group' -ConsistencyLevel eventual -CountVariable recCount
         if($GroupOBJ){
             $GroupOBJ
             try{
