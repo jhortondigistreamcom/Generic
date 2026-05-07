@@ -45,7 +45,7 @@ Function AddDeviceToGroup{
         [Parameter(Mandatory=$true)] $Device,
         [Parameter(Mandatory=$true)] $Group
     )
-    Write-host '[Status]: Attempting to Add $Device to $Group'
+    Write-Host "[Status]: Get Group Members for $($Group.DisplayName)"
     if(ApprovedGroups -Group $Group){
         Write-host '[Approved]: $Group is an approved group'
         $groupobj = Get-MgGroup -Filter "DisplayName eq '$Group'"
@@ -82,7 +82,8 @@ Function GetGroupMembers{
     )
     Write-host '[Status]: Get Group Members for $Group'
     try{
-        $GroupOBJ = Get-MgGroup -Search 'displayName:$Group' -ConsistencyLevel eventual -CountVariable recCount
+        $SearchKey = ($Group -split ' ')[0..1] -join ' '
+        $GroupOBJ = Get-MgGroup -Search "displayName:$SearchKey" -ConsistencyLevel eventual -CountVariable recCount
         if($GroupOBJ){
             $GroupOBJ
             try{
