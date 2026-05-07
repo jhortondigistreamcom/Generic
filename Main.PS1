@@ -82,13 +82,17 @@ Function GetGroupMembers{
     )
     Write-host "[Status]: Get Group Members for $Group"
     try{
-        $SearchKey = ($Group -split ' ')[0..1] -join ' '
+        $SearchKey = $Group.Replace("-"," ")
+        $SearchKey = $SearchKey.Replace("."," ")
         Write-host "[Status]: Searching Key $SearchKey" 
         $GroupOBJ = Get-MgGroup -Search "displayName:$SearchKey" -ConsistencyLevel eventual -CountVariable recCount
         if($GroupOBJ){
             $GroupOBJ
             try{
-                $GroupOBJ | Get-MgGroupMember -All
+                $GroupMembers = Get-MgGroupMember -All -GroupId $GroupOBJ.id  | ForEach-Object { $_.AdditionalProperties['displayName'] }
+                write-host "Members"
+                Write-Host "--------"
+                $GroupMembers
             }catch{
                 Write-host '[Failed]: Unable to process command, see error:'
                 $_
